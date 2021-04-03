@@ -15,5 +15,18 @@
   "bugs": {
     "url": "https://github.com/musabjaved10/timesheet/issues"
   },
-  "homepage": "https://github.com/musabjaved10/timesheet#readme"
+  "homepage": "https://github.com/musabjaved10/timesheet#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.5",
+    "ejs": "^3.1.6",
+    "ejs-mate": "^3.0.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "mysql2": "^2.2.5",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0",
+    "sequelize": "^6.6.2"
+  }
 }
