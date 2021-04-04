@@ -37,6 +37,10 @@ app.use(session({
     }
 }));
 
+// //Configure passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
 const date = new Date();
 let mydate = `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${date.getDate() + 1}`
 let todayDate = `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${date.getDate()}`
@@ -51,7 +55,11 @@ app.use((req, res, next) => {
     next();
 });
 
+const userRoutes= require('./routes/user')
+app.use('/login',userRoutes)
+
 app.get('/',(req,res)=>{
+    console.log(req.user)
     res.render('index')
 })
 

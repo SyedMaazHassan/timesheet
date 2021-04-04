@@ -1,13 +1,10 @@
 module.exports = (sequelize, Datatypes) => {
     const Admin = sequelize.define("Admin",{
-        fname:{
+        name:{
             type:Datatypes.STRING,
             allowNull: false
         },
-        lname:{
-            type:Datatypes.STRING,
-            allowNull: false
-        },
+
         email:{
             type:Datatypes.STRING,
             allowNull: false
@@ -18,7 +15,12 @@ module.exports = (sequelize, Datatypes) => {
         },
         phone:{
             type: Datatypes.INTEGER,
-            allowNull:false       }
+            allowNull:false
+        },
+        role:{
+            type: Datatypes.INTEGER,
+            defaultValue:1
+        }
 
     });
 
