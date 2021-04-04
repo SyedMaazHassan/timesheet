@@ -8,6 +8,12 @@ const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const passport = require('passport')
 
+//sequelize
+const db = require("./models")
+db.sequelize.sync().then(()=>{
+    console.log('Sequelize is working')
+})
+
 
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
@@ -48,8 +54,6 @@ app.use((req, res, next) => {
 app.get('/',(req,res)=>{
     res.render('index')
 })
-
-
 
 
 
