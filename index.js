@@ -7,6 +7,7 @@ const flash = require('connect-flash')
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const passport = require('passport')
+const {isAdmin, checkLoggedOut, checkLoggedIn} = require('./middleware')
 
 //sequelize
 const db = require("./models")
@@ -58,7 +59,8 @@ app.use((req, res, next) => {
 const userRoutes= require('./routes/user')
 app.use('/login',userRoutes)
 
-app.get('/',(req,res)=>{
+app.get('/',checkLoggedIn,(req,res)=>{
+    res.locals.currentUser = req.user
     console.log(req.user)
     res.render('index')
 })

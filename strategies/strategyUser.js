@@ -2,10 +2,9 @@ const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
 const db = require('../models')
-// const flash = require('connect-flash');
 
 
-passport.use('user',new LocalStrategy({
+passport.use('user', new LocalStrategy({
         usernameField: 'email',
         passwordField: 'password',
         passReqToCallback: true
@@ -13,7 +12,35 @@ passport.use('user',new LocalStrategy({
     async (req, email, password, done) => {
         // console.log(email, password)
         try {
-            await db.Consultant.findOne({where:{email: email}, raw:true}).then(async (user) => {
+            await db.Consultant.findOne({where: {email: email}, raw: true}).then(async (user) => {
+
+                if (!user) {
+                    return done(null, false, req.flash("error", `Email ${email} doesn't exist`));
+                }
+                if (user) {
+                    // console.log('heyyy its a user', user)
+                    let match = await comparePassword(password, user);
+                    if (match === true) {
+                        return done(null, user, null)
+                    } else {
+                        return done(null, false, req.flash("error", match))
+                    }
+                }
+            });
+        } catch (err) {
+            console.log(err);
+            return done(null, false);
+        }
+    }));
+passport.use('manager', new LocalStrategy({
+        usernameField: 'email',
+        passwordField: 'password',
+        passReqToCallback: true
+    },
+    async (req, email, password, done) => {
+        // console.log(email, password)
+        try {
+            await db.Linemanager.findOne({where: {email: email}, raw: true}).then(async (user) => {
 
                 if (!user) {
                     return done(null, false, req.flash("error", `Email ${email} doesn't exist`));
@@ -23,7 +50,7 @@ passport.use('user',new LocalStrategy({
                     let match = await comparePassword(password, user);
 
                     if (match === true) {
-                        // console.log('matching done here is the user >', user)
+                        console.log('matching done here is the user >', user)
                         return done(null, user, null)
                     } else {
                         return done(null, false, req.flash("error", match))
@@ -36,44 +63,42 @@ passport.use('user',new LocalStrategy({
         }
     }));
 
-
-
-
-
-
-let findUserById = (id) => {
-    return new Promise((resolve, reject) => {
+passport.use('admin', new LocalStrategy({
+        usernameField: 'email',
+        passwordField: 'password',
+        passReqToCallback: true
+    },
+    async (req, email, password, done) => {
+        // console.log(email, password)
         try {
-            db.Consultant.findOne({where})
+            await db.Admin.findOne({where: {email: email}, raw: true}).then(async (user) => {
 
-            db.query(' SELECT * FROM users WHERE user_id = ?  ', id, function(err, rows) {
-                    if (err) {
-                        reject(err)
-                    }
-                    let user = rows[0];
-                    // console.log('printing user from FINDUSERBYID')
-                    // console.log(user)
-                    resolve(user);
+                if (!user) {
+                    return done(null, false, req.flash("error", `Email ${email} doesn't exist`));
                 }
-            );
+                if (user) {
+                    let match = await comparePassword(password, user);
+
+                    if (match === true) {
+                        return done(null, user, null)
+                    } else {
+                        return done(null, false, req.flash("error", match))
+                    }
+                }
+            });
         } catch (err) {
-            reject(err);
+            console.log(err);
+            return done(null, false);
         }
-    });
-};
+    }));
 
 let comparePassword = (password, userObject) => {
-    console.log(password, userObject.password)
     return new Promise(async (resolve, reject) => {
         try {
             await bcrypt.compare(password, userObject.password).then((isMatch) => {
                 if (isMatch) {
-
-                    console.log('matched')
                     resolve(true);
                 } else {
-                    console.log('Not matched')
-                    console.log(bcrypt.hashSync('password',10))
                     resolve(`Incorrect Password`);
                 }
             });
@@ -84,20 +109,32 @@ let comparePassword = (password, userObject) => {
 };
 
 passport.serializeUser((user, done) => {
-    // console.log(`Inside Serializing user:>`)
-    // console.log(user)
-    done(null, user.id);
+    done(null, user);
 });
 
-passport.deserializeUser((id, done) => {
-    // console.log(`Inside DESerializing user:>`)
-    db.Consultant.findOne({where:{id:id}, raw:true}).then((user) => {
-        // console.log('printing userr****************')
-        // console.log(user)
-        return done(null, user);
-    }).catch(error => {
-        return done(error, null)
-    });
+passport.deserializeUser((user, done) => {
+    if (user.role === 2){
+        db.Linemanager.findOne({where: {id: user.id}, raw: true}).then((user) => {
+            return done(null, user)}).catch(error => {
+            return done(error, null)
+        });
+    }else if(user.role === 3){
+        db.Consultant.findOne({where: {id: user.id}, raw: true}).then((user) => {
+            return done(null, user)}).catch(error => {
+            return done(error, null)
+        });
+
+    }else if(user.role === 1){
+        db.Admin.findOne({where: {id: user.id}, raw: true}).then((user) => {
+            // console.log('printing userr****************')
+            // console.log(user)
+            return done(null, user)}).catch(error => {
+            return done(error, null)
+        });
+    }
+
+
+
 })
 
 module.exports = passport
