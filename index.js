@@ -71,8 +71,13 @@ app.get('/',checkLoggedIn,async (req,res)=>{
         nest: true,
         raw: true
     }).then(result => {
-        weekCreatable = Number(result.createdAt.toLocaleDateString().split('/')[0])+7 < date.getDay()
-        res.locals.weekCreatable = weekCreatable
+        if(result.length > 0){
+            weekCreatable = Number(result.createdAt.toLocaleDateString().split('/')[0])+7 < date.getDay()
+            res.locals.weekCreatable = weekCreatable
+        }
+        else{
+            weekCreatable = true
+        }
     })
     await db.Notification.findAll({
         where:{ConsultantId: req.user.id},
