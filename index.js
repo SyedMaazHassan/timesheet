@@ -76,7 +76,7 @@ app.get('/',checkLoggedIn,async (req,res)=>{
             res.locals.weekCreatable = weekCreatable
         }
         else{
-            weekCreatable = true
+            res.locals.weekCreatable = true
         }
     })
     await db.Notification.findAll({
@@ -85,6 +85,7 @@ app.get('/',checkLoggedIn,async (req,res)=>{
         nest:true,
         raw:true
     }).then(notifications=>{
+
         res.locals.notifications = notifications
     })
     await db.Week.findAll({
@@ -96,6 +97,18 @@ app.get('/',checkLoggedIn,async (req,res)=>{
     })
     // console.log(req.user)
     await res.render('index')
+})
+app.get('/indexmanager',checkLoggedIn,async (req,res)=>{
+    res.locals.currentUser = req.user
+    await db.Notification.findAll({
+        where:{ConsultantId: req.user.id},
+        include:[db.Consultant],
+        nest:true,
+        raw:true
+    }).then(notifications=>{
+        res.locals.notifications = notifications
+    })
+    await res.render('indexManager')
 })
 
 app.get('/check',(req,res,next)=>{

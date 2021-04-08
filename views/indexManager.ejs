@@ -140,11 +140,11 @@
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-envelope fa-fw"></i>
                             <!-- Counter - Messages -->
-                            <span class="badge badge-danger badge-counter">1</span>
+                            <span class="badge badge-danger badge-counter"><%=notifications.length%></span>
                         </a>
                         <!-- Dropdown - Messages -->
 
-                        <%if(notifications){%>
+                        <%if(notifications.length > 0){%>
                             <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                  aria-labelledby="messagesDropdown">
                                 <h6 class="dropdown-header">
