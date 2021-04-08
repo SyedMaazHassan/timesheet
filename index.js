@@ -101,24 +101,36 @@ app.get('/',checkLoggedIn,async (req,res)=>{
 app.get('/indexmanager',checkLoggedIn,async (req,res)=>{
     res.locals.currentUser = req.user
     await db.Notification.findAll({
-        where:{ConsultantId: req.user.id},
+        where:{LinemanagerId: req.user.id},
         include:[db.Consultant],
         nest:true,
         raw:true
     }).then(notifications=>{
         res.locals.notifications = notifications
+        console.log(notifications)
     })
     await res.render('indexManager')
 })
 
 app.get('/check',(req,res,next)=>{
-    db.Week.findAll({
-        attributes:['createdAt'],
+    db.Consultant.findAll({
+        attributes:['id'],
+        where:{LinemanagerId: 1},
         raw: true,
         nest: true
     }).then(result=>{
-
+        const consultantIds = []
+        for(let id of result){
+            consultantIds.push(id.id)
+        }
+        console.log(consultantIds)
+        db.Consultant.findAll({
+            where:{ id: consultantIds},
+            raw:true,
+            nest:true
+        }).then(result=> console.log(result))
     })
+
 })
 
 
