@@ -44,7 +44,7 @@ router.post('/user', passport.authenticate("user", {
     })
 )
 router.post('/manager', passport.authenticate("manager", {
-        successRedirect: '/',
+        successRedirect: '/indexmanager',
         failureRedirect: '/login/manager',
         successFlash: true,
         failureFlash: true

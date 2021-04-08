@@ -7,7 +7,7 @@ const flash = require('connect-flash')
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const passport = require('passport')
-const {isAdmin, checkLoggedOut, checkLoggedIn} = require('./middleware')
+const {isAdmin, checkLoggedOut, checkLoggedIn, isConsultant,isManager} = require('./middleware')
 
 //sequelize
 const db = require("./models")
