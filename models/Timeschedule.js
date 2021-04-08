@@ -1,19 +1,7 @@
 module.exports = (sequelize, Datatypes) => {
     const Timeschedule = sequelize.define("Timeschedule", {
-        from_time: {
-            type: Datatypes.STRING,
-            allowNull: false
-        },
-        to_time: {
-            type: Datatypes.STRING,
-            allowNull: false
-        },
-        day: {
-            type: Datatypes.STRING,
-            allowNull: false
-        },
-        total_hours: {
-            type: Datatypes.INTEGER,
+        data: {
+            type: Datatypes.STRING(500),
             allowNull: false
         }
     });

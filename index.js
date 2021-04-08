@@ -44,7 +44,7 @@ app.use(passport.session());
 
 const date = new Date();
 let mydate = `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${date.getDate() + 1}`
-let todayDate = `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${date.getDate()}`
+let todayDate = `${(date.getMonth() + 1)}/${date.getDate()}/${date.getFullYear()}`
 
 app.use((req, res, next) => {
 
@@ -55,17 +55,53 @@ app.use((req, res, next) => {
     res.locals.todayDate = todayDate
     next();
 });
+let weekCreatable = true
+
+
 
 const userRoutes= require('./routes/user')
 app.use('/login',userRoutes)
 
-app.get('/',checkLoggedIn,(req,res)=>{
+app.get('/',checkLoggedIn,async (req,res)=>{
     res.locals.currentUser = req.user
-    console.log(req.user)
-    res.render('index')
+    await db.Week.findOne({
+        attributes:['createdAt'],
+        where:{ConsultantId: null},
+        order:[['id','DESC']],
+        nest: true,
+        raw: true
+    }).then(result => {
+        weekCreatable = Number(result.createdAt.toLocaleDateString().split('/')[0])+7 < date.getDay()
+        res.locals.weekCreatable = weekCreatable
+    })
+    await db.Notification.findAll({
+        where:{ConsultantId: req.user.id},
+        include:[db.Consultant],
+        nest:true,
+        raw:true
+    }).then(notifications=>{
+        res.locals.notifications = notifications
+    })
+    await db.Week.findAll({
+        nest: true,
+        raw: true
+    }).then(result => {
+        res.locals.allWeeks = result
+
+    })
+    // console.log(req.user)
+    await res.render('index')
 })
 
+app.get('/check',(req,res,next)=>{
+    db.Week.findAll({
+        attributes:['createdAt'],
+        raw: true,
+        nest: true
+    }).then(result=>{
 
+    })
+})
 
 
 app.listen(PORT,()=>{

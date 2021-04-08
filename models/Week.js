@@ -4,10 +4,6 @@ module.exports = (sequelize, Datatypes) => {
             type:Datatypes.INTEGER,
             allowNull: false
         },
-        number:{
-            type:Datatypes.STRING,
-            allowNull: false
-        },
         creation_date:{
             type:Datatypes.STRING,
             allowNull: false

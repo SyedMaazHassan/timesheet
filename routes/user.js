@@ -6,7 +6,6 @@ const passport = require('../strategies/strategyUser')
 const {isAdmin, checkLoggedOut, checkLoggedIn} = require('../middleware')
 
 
-
 router.get('/user', (req, res) => {
     res.render('loginUser')
 })
@@ -17,11 +16,24 @@ router.get('/admin', (req, res) => {
     res.render('loginAdmin')
 })
 router.post('/find', (req, res) => {
-    db.Consultant.findOne({
-        where: {email: 'adrian@gmail.com'},
+    db.Week.findOne({
+        attributes:['createdAt'],
+        where:{ConsultantId: null},
+        order:[['id','DESC']],
         nest: true,
         raw: true
-    }).then(result => console.log(result.id))
+
+    }).then(result => console.log(result.createdAt ))
+})
+router.post('/create', (req, res) => {
+    db.Week.create(
+        {
+            month: 4,
+            state: 1,
+            link_code:"www.facebook.com",
+            creation_date: new Date().getDate()
+        }
+    ).then(result => console.log(result))
 })
 
 router.post('/user', passport.authenticate("user", {
@@ -63,33 +75,33 @@ router.post("/changepassword", checkLoggedIn, async (req, res) => {
         if (match === true) {
             let salt = bcrypt.genSaltSync(10);
             let hashedPassword = bcrypt.hashSync(newPassword, salt)
-            if(req.user.role === 1){
-                await db.Consultant.update({ password: hashedPassword }, {
+            if (req.user.role === 1) {
+                await db.Consultant.update({password: hashedPassword}, {
                     where: {
                         email: 'admin@gmail.com'
                     }
-                }).then(() =>{
-                    req.flash('success','Password has been changed successfully')
+                }).then(() => {
+                    req.flash('success', 'Password has been changed successfully')
                     return res.redirect('/')
                 });
             }
-            if(req.user.role === 2){
-                await db.Linemanager.update({ password: hashedPassword }, {
+            if (req.user.role === 2) {
+                await db.Linemanager.update({password: hashedPassword}, {
                     where: {
                         email: req.user.email
                     }
-                }).then(() =>{
-                    req.flash('success','Password has been changed successfully')
+                }).then(() => {
+                    req.flash('success', 'Password has been changed successfully')
                     return res.redirect('/')
                 });
             }
-            if(req.user.role === 3){
-                await db.Consultant.update({ password: hashedPassword }, {
+            if (req.user.role === 3) {
+                await db.Consultant.update({password: hashedPassword}, {
                     where: {
                         email: req.user.email
                     }
-                }).then(() =>{
-                    req.flash('success','Password has been changed successfully')
+                }).then(() => {
+                    req.flash('success', 'Password has been changed successfully')
                     return res.redirect('/')
                 });
             }
