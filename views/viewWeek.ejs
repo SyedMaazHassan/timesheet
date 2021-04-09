@@ -1,8 +1,29 @@
-<% layout("./layout/boilerplate") %>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
+    <!-- Custom styles for this template-->
+    <link  rel="stylesheet" href="/css/sb-admin-2.css" >
+    <title>Timesheet manager</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+            rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+<body>
 <div class="container my-4 p-0" id="my-app">
     <div class="card radius-10 padding-2 border-secondary">
         <h4 class="text-secondary mb-4">From <u>{{ week_start_date }}</u> To <u>{{ week_end_date }}</u></h4>
+        <h5>Linemanager: <%=week[0].Linemanager.name || 'To be reviewed'%></h5>
+        <h5>Consultant: <%=week[0].Consultant.name%></h5>
         <div class="row my-0 px-2">
             <div class="col-sm-3 px-2">
                 <div class="google-box radius-10">
@@ -25,13 +46,13 @@
                             </div>
 
 
-                            <div class="px-3 mt-3">
+                            <div class="px-3 mt-3 d-none">
                                 <button type="button" class="btn py-2 btn-block primary-button radius-10"
                                         v-on:click="saveData()">Save week
                                 </button>
                             </div>
 
-                            <div class="px-3 mt-2">
+                            <div class="px-3 mt-2 d-none">
                                 <button type="button" class="btn py-2 btn-secondary btn-block radius-10">Cancel</button>
                             </div>
 
@@ -58,7 +79,7 @@
                                 </div>
                             </div>
 
-                            <div class="card border-primary-color radius-10 padding-2 my-1"
+                            <div class="card border-primary-color radius-10 padding-2 my-1 d-none"
                                  style="background-color: #f8f8f8;">
                                 <div class="d-flex">
                                     <h6 class="text-secondary">Add working timeslot</h6>
@@ -103,7 +124,7 @@
                                         <th style="width: 20%;">To</th>
                                         <th style="width: 20%;">Total</th>
                                         <th style="width: 40%;">Description</th>
-                                        <th style="width: 20%;">Options</th>
+
                                     </tr>
                                     </thead>
 
@@ -124,16 +145,7 @@
                                         <td style="width: 100%;">
                                             <p class="my-0 py-0">{{ schedule.description }}</p>
                                         </td>
-                                        <td class="d-flex">
-                                            <button type="button" style="margin: auto;" @click="editSlot(index)"
-                                                    class="btn btn-success p-1 radius-100 d-flex mr-2 align-items-center justify-content-center">
-                                                <i class="material-icons my-0 py-0">edit</i>
-                                            </button>
-                                            <button type="button" style="margin: auto;" @click="deleteSlot(index)"
-                                                    class="btn btn-danger p-1 radius-100 d-flex align-items-center justify-content-center">
-                                                <i class="material-icons my-0 py-0">delete</i>
-                                            </button>
-                                        </td>
+
                                     </tr>
 
 
@@ -157,16 +169,7 @@
                                         <td style="width: 100%;">
                                             <p class="my-0 py-0">{{ schedule.description }}</p>
                                         </td>
-                                        <td class="d-flex">
-                                            <button type="button" style="margin: auto;" @click="editSlot(index)"
-                                                    class="btn btn-success p-1 radius-100 d-flex mr-2 align-items-center justify-content-center">
-                                                <i class="material-icons my-0 py-0">edit</i>
-                                            </button>
-                                            <button type="button" style="margin: auto;" @click="deleteSlot(index)"
-                                                    class="btn btn-danger p-1 radius-100 d-flex align-items-center justify-content-center">
-                                                <i class="material-icons my-0 py-0">delete</i>
-                                            </button>
-                                        </td>
+
                                     </tr>
 
 
@@ -190,16 +193,7 @@
                                         <td style="width: 100%;">
                                             <p class="my-0 py-0">{{ schedule.description }}</p>
                                         </td>
-                                        <td class="d-flex">
-                                            <button type="button" style="margin: auto;" @click="editSlot(index)"
-                                                    class="btn btn-success p-1 radius-100 d-flex mr-2 align-items-center justify-content-center">
-                                                <i class="material-icons my-0 py-0">edit</i>
-                                            </button>
-                                            <button type="button" style="margin: auto;" @click="deleteSlot(index)"
-                                                    class="btn btn-danger p-1 radius-100 d-flex align-items-center justify-content-center">
-                                                <i class="material-icons my-0 py-0">delete</i>
-                                            </button>
-                                        </td>
+
                                     </tr>
 
 
@@ -223,16 +217,7 @@
                                         <td style="width: 100%;">
                                             <p class="my-0 py-0">{{ schedule.description }}</p>
                                         </td>
-                                        <td class="d-flex">
-                                            <button type="button" style="margin: auto;" @click="editSlot(index)"
-                                                    class="btn btn-success p-1 radius-100 d-flex mr-2 align-items-center justify-content-center">
-                                                <i class="material-icons my-0 py-0">edit</i>
-                                            </button>
-                                            <button type="button" style="margin: auto;" @click="deleteSlot(index)"
-                                                    class="btn btn-danger p-1 radius-100 d-flex align-items-center justify-content-center">
-                                                <i class="material-icons my-0 py-0">delete</i>
-                                            </button>
-                                        </td>
+
                                     </tr>
 
 
@@ -256,15 +241,15 @@
                                         <td style="width: 100%;">
                                             <p class="my-0 py-0">{{ schedule.description }}</p>
                                         </td>
-                                        <td class="d-flex">
-                                            <button type="button" style="margin: auto;" @click="editSlot(index)"
-                                                    class="btn btn-success p-1 radius-100 d-flex mr-2 align-items-center justify-content-center">
-                                                <i class="material-icons my-0 py-0">edit</i>
-                                            </button>
-                                            <button type="button" style="margin: auto;" @click="deleteSlot(index)"
-                                                    class="btn btn-danger p-1 radius-100 d-flex align-items-center justify-content-center">
-                                                <i class="material-icons my-0 py-0">delete</i>
-                                            </button>
+                                        <td class="d-flex d-none">
+<!--                                            <button type="button" style="margin: auto;" @click="editSlot(index)"-->
+<!--                                                    class="btn btn-success p-1 radius-100 d-flex mr-2 align-items-center justify-content-center">-->
+<!--                                                <i class="material-icons my-0 py-0">edit</i>-->
+<!--                                            </button>-->
+<!--                                            <button type="button" style="margin: auto;" @click="deleteSlot(index)"-->
+<!--                                                    class="btn btn-danger p-1 radius-100 d-flex align-items-center justify-content-center">-->
+<!--                                                <i class="material-icons my-0 py-0">delete</i>-->
+<!--                                            </button>-->
                                         </td>
                                     </tr>
 
@@ -289,7 +274,7 @@
                                         <td style="width: 100%;">
                                             <p class="my-0 py-0">{{ schedule.description }}</p>
                                         </td>
-                                        <td class="d-flex">
+                                        <td class="d-flex d-none">
                                             <button type="button" style="margin: auto;" @click="editSlot(index)"
                                                     class="btn btn-success p-1 radius-100 d-flex mr-2 align-items-center justify-content-center">
                                                 <i class="material-icons my-0 py-0">edit</i>
@@ -315,24 +300,7 @@
                                         </td>
                                     </tr>
 
-                                    <tr v-for="(schedule, index) in days.sunday.all_slots" v-bind:index="index">
-                                        <td>{{ schedule.from_time }}</td>
-                                        <td>{{ schedule.to_time }}</td>
-                                        <td>{{ schedule.duration }}</td>
-                                        <td style="width: 100%;">
-                                            <p class="my-0 py-0">{{ schedule.description }}</p>
-                                        </td>
-                                        <td class="d-flex">
-                                            <button type="button" style="margin: auto;" @click="editSlot(index)"
-                                                    class="btn btn-success p-1 radius-100 d-flex mr-2 align-items-center justify-content-center">
-                                                <i class="material-icons my-0 py-0">edit</i>
-                                            </button>
-                                            <button type="button" style="margin: auto;" @click="deleteSlot(index)"
-                                                    class="btn btn-danger p-1 radius-100 d-flex align-items-center justify-content-center">
-                                                <i class="material-icons my-0 py-0">delete</i>
-                                            </button>
-                                        </td>
-                                    </tr>
+
 
 
                                     </tbody>
@@ -349,15 +317,31 @@
             </div>
 
         </div>
+
+
     </div>
-    <div class="text-white mt-1 ">
-        <% if(feedback && feedback.length > 0){ %>
-            <h5 style="background-color: #004170 "> Feedback from manager:
-                <p class="text-black"><%= feedback[0].content %></p>
-            </h5>
-        <% } %>
-    </div>
+    <%if(currentUser && currentUser.role === 2){%>
+        <div class="row mt-3">
+            <div class="col-6">
+                <form action="/reject/<%=week[0].link_code%>" method="post" onsubmit="return confirm('Confirm to reject this week');">
+                    <input type="text" placeholder="Place your feedback here..." name="content">
+                    <button type="submit" class="btn btn btn-danger">Reject</button>
+                </form>
+
+            </div>
+            <div class="col-6 d-flex flex-row-reverse">
+                <form action="/accept" method="post" onsubmit="return confirm('Confirm to accept this week');">
+                    <button type="submit" class="btn btn btn-success">Accept</button>
+                </form>
+
+            </div>
+
+        </div>
+    <%}%>
 </div>
+
+
+
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
 <script>
     function formate_my_date(myDate) {
@@ -609,3 +593,6 @@
         }
     })
 </script>
+</body>
+</html>
+

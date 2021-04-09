@@ -43,8 +43,8 @@
         <!-- Nav Item - Dashboard -->
         <li class="nav-item active">
             <a class="nav-link text-center" href="/">
-                <i class="far fa-hand-point-down"></i>
-                <span>Options</span></a>
+                <i class="fas fa-user-shield"></i>
+                <span>As Manager</span></a>
         </li>
 
         <!-- Divider -->
@@ -193,10 +193,7 @@
                         <!-- Dropdown - User Information -->
                         <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                              aria-labelledby="userDropdown">
-                            <a class="dropdown-item" href="/mybookings">
-                                <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                My bookings
-                            </a>
+
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                 <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -238,46 +235,37 @@
                 <div class="container">
                     <% if(weeks.length > 0){ %>
                         <% for (let week of weeks){ %>
-                            <div class="col-xl-4 col-md-6 mb-4">
-                                <div class="card border-left-primary shadow h-100 py-0">
-                                    <div class="card-body">
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col mr-2">
-                                                <div class="h4 mb-0 font-weight-bold text-gray-800">
-                                                    Week Submission by - <%= week.Consultant.name %></div>
+                            <% if(week.state === 1){ %>
+                                <div class="col-xl-4 col-md-6 mb-4">
+                                    <div class="card border-left-primary shadow h-100 py-0">
+                                        <div class="card-body">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                    <div class="h4 mb-0 font-weight-bold text-gray-800">
+                                                        Week Submission by - <%= week.Consultant.name %></div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="mt-3">
-                                            <div class="row">
-                                                <div class="col-sm-6 d-flex align-items-center">
+                                            <div class="mt-3">
+                                                <div class="row">
+                                                    <div class="col-sm-6 d-flex align-items-center">
                                         <span class="myLabel available">
                                             <b>Current</b>
                                         </span>
-                                                </div>
-                                                <div class="col-sm-6 d-flex align-items-center justify-content-end">
-                                                    <a href="/week/<%= week.id %>"
-                                                       class="btn btn-sm btn-secondary mr-1">View</a>
-                                                    <form action="/submitweek" method="post"
-                                                          onsubmit="return confirm('Confirm to accept this week');">
-
-                                                        <button type="submit" class="btn btn-success btn-sm py-1">Accept
-                                                        </button>
-                                                    </form>
-                                                    <form action="/submitweek" method="post"
-                                                          onsubmit="return confirm('Confirm to reject this week');">
-                                                        <button type="submit" class="btn btn-danger btn-sm py-1">Reject
-                                                        </button>
-                                                    </form>
+                                                    </div>
+                                                    <div class="col-sm-6 d-flex align-items-center justify-content-end">
+                                                        <a href="/view/<%= week.link_code %>"
+                                                           class="btn btn-sm btn-secondary mr-1">View</a>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            <% } %>
                         <% } %>
-                    <% } else{%>
+                    <% } else{ %>
                         <h2>No submissions yet</h2>
-                    <%}%>
+                    <% } %>
                 </div>
             </div>
 

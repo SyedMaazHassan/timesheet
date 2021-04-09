@@ -7,11 +7,14 @@ const flash = require('connect-flash')
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const passport = require('passport')
-const {isAdmin, checkLoggedOut, checkLoggedIn, isConsultant,isManager} = require('./middleware')
+const {isAdmin, checkLoggedOut, checkLoggedIn, isConsultant, isManager} = require('./middleware')
+const {v4: uuidv4} = require('uuid');
+uuidv4(); // ⇨ '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed'
+
 
 //sequelize
 const db = require("./models")
-db.sequelize.sync({alter:false}).then(()=>{
+db.sequelize.sync({alter: false}).then(() => {
     console.log('Sequelize is working')
 })
 
@@ -22,7 +25,6 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(flash())
-
 
 
 //use cookie parser
@@ -58,39 +60,37 @@ app.use((req, res, next) => {
 let weekCreatable = true
 
 
+const userRoutes = require('./routes/user')
+app.use('/login', userRoutes)
 
-const userRoutes= require('./routes/user')
-app.use('/login',userRoutes)
-
-app.get('/',checkLoggedIn,async (req,res)=>{
+app.get('/', checkLoggedIn, async (req, res) => {
     res.locals.currentUser = req.user
     await db.Week.findOne({
-        attributes:['createdAt'],
-        where:{ConsultantId: req.user.id},
-        order:[['id','DESC']],
+        attributes: ['createdAt'],
+        where: {ConsultantId: req.user.id},
+        order: [['id', 'DESC']],
         nest: true,
         raw: true
     }).then(result => {
         console.log(result)
-        if(result){
-            weekCreatable = Number(result.createdAt.toLocaleDateString().split('/')[0])+7 > date.getDay()
+        if (result) {
+            weekCreatable = Number(result.createdAt.toLocaleDateString().split('/')[0]) + 7 > date.getDay()
             res.locals.weekCreatable = false
-        }
-        else{
+        } else {
             res.locals.weekCreatable = true
         }
     })
     await db.Notification.findAll({
-        where:{ConsultantId: req.user.id},
-        include:[db.Consultant],
-        nest:true,
-        raw:true
-    }).then(notifications=>{
+        where: {ConsultantId: req.user.id},
+        include: [db.Consultant],
+        nest: true,
+        raw: true
+    }).then(notifications => {
 
         res.locals.notifications = notifications
     })
     await db.Week.findAll({
-        where:{
+        where: {
             ConsultantId: req.user.id
         },
         nest: true,
@@ -102,179 +102,255 @@ app.get('/',checkLoggedIn,async (req,res)=>{
     // console.log(req.user)
     await res.render('index')
 })
-app.get('/indexmanager',checkLoggedIn,async (req,res)=>{
+app.get('/indexmanager', checkLoggedIn, async (req, res) => {
     res.locals.currentUser = req.user
     await db.Notification.findAll({
-        where:{LinemanagerId: req.user.id},
-        include:[db.Consultant],
-        nest:true,
-        raw:true
-    }).then(notifications=>{
+        where: {LinemanagerId: req.user.id},
+        include: [db.Consultant],
+        nest: true,
+        raw: true
+    }).then(notifications => {
         res.locals.notifications = notifications
         console.log(notifications)
     })
     await db.Consultant.findAll({
-        where:{LinemanagerId: req.user.id},
-        attributes:['id'],
+        where: {LinemanagerId: req.user.id},
+        attributes: ['id'],
         nest: true,
         raw: true
-    }).then(ids=>{
+    }).then(ids => {
         const consultantIds = []
-        for(let id of ids){
+        for (let id of ids) {
             consultantIds.push(id.id)
         }
         db.Consultant.findAll({
-            where:{ id: consultantIds},
-            raw:true,
-            nest:true
+            where: {id: consultantIds},
+            raw: true,
+            nest: true
         }).then(
             db.Week.findAll({
-                where:{ConsultantId: consultantIds, state:[-1,0,1]},
-                include:[db.Consultant],
-                nest:true,
-                raw:true
-            }).then(weeks=> {
+                where: {ConsultantId: consultantIds, state: [-1, 0, 1]},
+                include: [db.Consultant],
+                nest: true,
+                raw: true
+            }).then(weeks => {
 
-                res.render('indexManager',{weeks})
+                res.render('indexManager', {weeks})
             }))
     })
 
 })
-app.post('/newweek',async(req,res)=>{
+app.post('/newweek', async (req, res) => {
     await db.Week.create({
         ConsultantId: req.user.id,
+        link_code: uuidv4()
     })
     await db.Week.findOne({
-        where:{ConsultantId: req.user.id},
-        order:[['id','DESC']],
+        where: {ConsultantId: req.user.id},
+        order: [['id', 'DESC']],
         nest: true,
         raw: true
-    }).then(week=>{
-        if(week){
+    }).then(week => {
+        if (week) {
             console.log(week)
             return res.redirect(`/week/${week.id}`)
         }
     })
 })
-
-app.get('/week/:id',checkLoggedIn,async(req,res)=>{
+app.get('/view/:link_code', (req, res) => {
     res.locals.currentUser = req.user
-    res.locals.weekCreatable = false
-    const id = req.params.id
-    await db.Notification.findAll({
-        where:{ConsultantId: req.user.id},
-        include:[db.Consultant],
-        nest:true,
-        raw:true
-    }).then(notifications=>{
-
-        res.locals.notifications = notifications
-    })
-    await db.Week.findAll({
-        where:{id:id},
-        nest:true,
-        raw:true
-    }).then(week=>{
-        if(week && week.length > 0){
-            console.log(week)
+    db.Week.findAll({
+        where: {link_code: req.params.link_code},
+        include: [db.Linemanager, db.Consultant],
+        raw: true,
+        nest: true,
+    }).then(week => {
+        if (week && week.length > 0) {
             db.Timeschedule.findAll({
-                where:{WeekId: id},
-                nest:true,
-                raw:true
-            }).then(result=>{
-                if(result && result.length > 0){
+                where: {WeekId: week[0].id},
+                raw: true,
+                nest: true
+            }).then(result => {
+                if (result && result.length > 0) {
                     // return res.render('newWeek', {week,result:null})
-                    return res.render('newWeek', {week,result:JSON.stringify(result[0].data)})
-                }else{
+                    console.log(week, '\nnow result', result)
+                    return res.render('viewWeek', {week, result: JSON.stringify(result[0].data)})
+                } else {
                     result = null
-                    return res.render('newWeek', {week,result})
+                    return res.render('viewWeek', {week, result})
                 }
             })
-        }
-        else{
-            req.flash('error',`This week doesn't exist`)
+        } else {
+            req.flash('error', 'this week does not exists')
             return res.redirect('/')
         }
     })
 
 })
-app.post('/savedata',(req   ,res)=>{
+app.post('/reject/:link_code', (req, res) => {
+    res.locals.currentUser = req.user
+    const content = req.body.content
+    db.Week.update({state: -1, LinemanagerId: req.user.id}, {
+        where: {link_code: req.params.link_code},
+        raw:true,
+        nest:true
+    }).then(result => {
+        db.Week.findAll({where: {link_code: req.params.link_code},raw:true, nest:true}).then(week => {
+            db.Feedback.create({
+                content:content,
+                WeekId: week[0].id,
+                raw:true,
+                nest:true
+            }).then(()=>{
+                req.flash('success', 'Feedback has been sent')
+                res.redirect('/indexmanager')
+            })
+        })
+    })
+})
+
+app.post('/accept', (req, res) => {
+
+})
+app.get('/week/:id', checkLoggedIn, async (req, res) => {
+    res.locals.currentUser = req.user
+    res.locals.weekCreatable = false
+    const id = req.params.id
+    await db.Notification.findAll({
+        where: {ConsultantId: req.user.id},
+        include: [db.Consultant],
+        nest: true,
+        raw: true
+    }).then(notifications => {
+
+        res.locals.notifications = notifications
+    })
+    await db.Week.findAll({
+        where: {id: id},
+        nest: true,
+        raw: true
+    }).then(week => {
+        if (week && week.length > 0) {
+            console.log(week)
+            db.Timeschedule.findAll({
+                where: {WeekId: id},
+                nest: true,
+                raw: true
+            }).then(result => {
+                if (result && result.length > 0) {
+                    // return res.render('newWeek', {week,result:null})
+                    db.Feedback.findAll({
+                        where:{WeekId: id},
+                        raw:true,
+                        nest:true
+                    }).then(feedback=>{
+                        if(feedback.length > 0){
+                            return res.render('newWeek', {feedback,week, result: JSON.stringify(result[0].data)})
+                        }
+                        else{
+                            return res.render('newWeek', {feedback:null,week, result: JSON.stringify(result[0].data)})
+                        }
+
+                    })
+
+
+                } else {
+                    result = null
+                    return res.render('newWeek', {feedback:null,week, result})
+                }
+            })
+        } else {
+            req.flash('error', `This week doesn't exist`)
+            return res.redirect('/')
+        }
+    })
+
+})
+app.post('/savedata', (req, res) => {
     const {week_id, schedule} = req.body
     db.Timeschedule.findAll({
-        where:{
+        where: {
             WeekId: parseInt(week_id),
 
         },
 
-    }).then(week=>{
-        if(week && week.length > 0){
-            db.Timeschedule.update({data: schedule }, {
+    }).then(week => {
+        if (week && week.length > 0) {
+            db.Timeschedule.update({data: schedule}, {
                 where: {
                     WeekId: parseInt(week_id)
                 }
             });
-            return res.status(200).json({msg:"Your week schedule has been updated"})
-        }else{
+            return res.status(200).json({msg: "Your week schedule has been updated"})
+        } else {
             db.Timeschedule.create({
-                data:schedule,
+                data: schedule,
                 WeekId: week_id
             })
-            return res.status(200).json({msg:"Your week schedule has been created"})
+            return res.status(200).json({msg: "Your week schedule has been created"})
 
         }
     })
 })
 
-app.get('/check',(req,res,next)=>{
-    db.Consultant.findAll({
-        attributes:['id'],
-        where:{LinemanagerId: 1},
+app.get('/check/:link_code', (req, res, next) => {
+    db.Week.findAll({
+        where: {link_code: req.params.link_code},
+        include: [db.Linemanager, db.Consultant],
         raw: true,
-        nest: true
-    }).then(result=>{
-        const consultantIds = []
-        for(let id of result){
-            consultantIds.push(id.id)
+        nest: true,
+    }).then(week => {
+        if (week && week.length > 0) {
+            db.Timeschedule.findAll({
+                where: {WeekId: week[0].id},
+                raw: true,
+                nest: true
+            }).then(result => {
+                if (result && result.length > 0) {
+                    // return res.render('newWeek', {week,result:null})
+                    console.log(week, '\nnow result', result)
+                    return res.render('viewWeek', {week, result: JSON.stringify(result[0].data)})
+                } else {
+                    result = null
+                    return res.render('viewWeek', {week, result})
+                }
+            })
+        } else {
+            req.flash('error', 'this week does not exists')
+            return res.redirect('/')
         }
-        console.log(consultantIds)
-        db.Consultant.findAll({
-            where:{ id: consultantIds},
-            raw:true,
-            nest:true
-        }).then(
-            db.Week.findAll({
-                where:{ConsultantId: consultantIds},
-                nest:true,
-                raw:true
-            }).then(w=>res.send(w))
-        )
     })
 
 })
-app.get('/check2',checkLoggedIn,isManager,(req,res)=>{
+app.get('/check2/:link_code', checkLoggedIn, isManager, (req, res) => {
     res.locals.weekCreatable = true
     res.locals.notifications = ['hello']
-    db.Consultant.findAll({
-        where:{LinemanagerId: req.user.id},
-        attributes:['id'],
-        nest: true,
-        raw: true
-    }).then(ids=>{
-        const consultantIds = []
-        for(let id of ids){
-            consultantIds.push(id.id)
-        }
-        console.log(consultantIds)
-        db.Week.findAll({
-            where:{ConsultantId: consultantIds, state:[-1,0,1]},
-            include:[db.Consultant],
-            nest:true,
-            raw:true
-        }).then(w=>res.send(w[0].Consultant))
-
-    })
+    // db.Consultant.findAll({
+    //     where: {LinemanagerId: req.user.id},
+    //     attributes: ['id'],
+    //     nest: true,
+    //     raw: true
+    // }).then(ids => {
+    //     const consultantIds = []
+    //     for (let id of ids) {
+    //         consultantIds.push(id.id)
+    //     }
+    //     console.log(consultantIds)
+    //     db.Week.findAll({
+    //         where: {ConsultantId: consultantIds, state: [-1, 0, 1]},
+    //         include: [db.Consultant],
+    //         nest: true,
+    //         raw: true
+    //     }).then(w => res.send(w[0].Consultant))
+    //
+    // })
+    db.Week.findAll({
+        where:{link_code: req.params.link_code},
+        raw:true,
+        nest:true
+    }).then(result=>console.log(result))
 })
 
-app.listen(PORT,()=>{
+app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`)
 })
