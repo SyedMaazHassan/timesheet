@@ -11,7 +11,7 @@ const {isAdmin, checkLoggedOut, checkLoggedIn, isConsultant,isManager} = require
 
 //sequelize
 const db = require("./models")
-db.sequelize.sync().then(()=>{
+db.sequelize.sync({alter:false}).then(()=>{
     console.log('Sequelize is working')
 })
 
@@ -66,14 +66,15 @@ app.get('/',checkLoggedIn,async (req,res)=>{
     res.locals.currentUser = req.user
     await db.Week.findOne({
         attributes:['createdAt'],
-        where:{ConsultantId: null},
+        where:{ConsultantId: req.user.id},
         order:[['id','DESC']],
         nest: true,
         raw: true
     }).then(result => {
-        if(result && result.length > 0){
-            weekCreatable = Number(result.createdAt.toLocaleDateString().split('/')[0])+7 < date.getDay()
-            res.locals.weekCreatable = weekCreatable
+        console.log(result)
+        if(result){
+            weekCreatable = Number(result.createdAt.toLocaleDateString().split('/')[0])+7 > date.getDay()
+            res.locals.weekCreatable = false
         }
         else{
             res.locals.weekCreatable = true
@@ -89,11 +90,14 @@ app.get('/',checkLoggedIn,async (req,res)=>{
         res.locals.notifications = notifications
     })
     await db.Week.findAll({
+        where:{
+            ConsultantId: req.user.id
+        },
         nest: true,
         raw: true
     }).then(result => {
+        res.locals.day = new Date().getDay()
         res.locals.allWeeks = result
-
     })
     // console.log(req.user)
     await res.render('index')
@@ -109,7 +113,32 @@ app.get('/indexmanager',checkLoggedIn,async (req,res)=>{
         res.locals.notifications = notifications
         console.log(notifications)
     })
-    await res.render('indexManager')
+    await db.Consultant.findAll({
+        where:{LinemanagerId: req.user.id},
+        attributes:['id'],
+        nest: true,
+        raw: true
+    }).then(ids=>{
+        const consultantIds = []
+        for(let id of ids){
+            consultantIds.push(id.id)
+        }
+        db.Consultant.findAll({
+            where:{ id: consultantIds},
+            raw:true,
+            nest:true
+        }).then(
+            db.Week.findAll({
+                where:{ConsultantId: consultantIds, state:[-1,0,1]},
+                include:[db.Consultant],
+                nest:true,
+                raw:true
+            }).then(weeks=> {
+
+                res.render('indexManager',{weeks})
+            }))
+    })
+
 })
 app.post('/newweek',async(req,res)=>{
     await db.Week.create({
@@ -130,7 +159,7 @@ app.post('/newweek',async(req,res)=>{
 
 app.get('/week/:id',checkLoggedIn,async(req,res)=>{
     res.locals.currentUser = req.user
-    res.locals.weekCreatable = true
+    res.locals.weekCreatable = false
     const id = req.params.id
     await db.Notification.findAll({
         where:{ConsultantId: req.user.id},
@@ -212,22 +241,37 @@ app.get('/check',(req,res,next)=>{
             where:{ id: consultantIds},
             raw:true,
             nest:true
-        }).then(result=> console.log(result))
+        }).then(
+            db.Week.findAll({
+                where:{ConsultantId: consultantIds},
+                nest:true,
+                raw:true
+            }).then(w=>res.send(w))
+        )
     })
 
 })
-app.get('/check2',(req,res)=>{
+app.get('/check2',checkLoggedIn,isManager,(req,res)=>{
     res.locals.weekCreatable = true
     res.locals.notifications = ['hello']
-    db.Week.findOne({
-        where:{ConsultantId: req.user.id},
-        order:[['id','DESC']],
+    db.Consultant.findAll({
+        where:{LinemanagerId: req.user.id},
+        attributes:['id'],
         nest: true,
         raw: true
-    }).then(week=>{
-        if(id && id.length > 0 ){
-            res.send(week.id)
+    }).then(ids=>{
+        const consultantIds = []
+        for(let id of ids){
+            consultantIds.push(id.id)
         }
+        console.log(consultantIds)
+        db.Week.findAll({
+            where:{ConsultantId: consultantIds, state:[-1,0,1]},
+            include:[db.Consultant],
+            nest:true,
+            raw:true
+        }).then(w=>res.send(w[0].Consultant))
+
     })
 })
 

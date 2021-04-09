@@ -10,7 +10,7 @@
     <meta name="author" content="">
 
     <!-- Custom styles for this template-->
-    <link  rel="stylesheet" href="/css/sb-admin-2.css" >
+    <link rel="stylesheet" href="/css/sb-admin-2.css">
     <title>Desk Reservation</title>
 
     <!-- Custom fonts for this template-->
@@ -18,7 +18,6 @@
     <link
             href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
             rel="stylesheet">
-
 
 
 </head>
@@ -66,7 +65,6 @@
         </li>
 
 
-
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
 
@@ -83,7 +81,7 @@
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
         <!-- Main Content -->
-        <div id="content" >
+        <div id="content">
             <!-- Topbar -->
             <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
@@ -95,7 +93,7 @@
 
                 <!-- Topbar Date -->
                 <div class="ml-3">
-                    Today: <%=todayDate%>
+                    Today: <%= todayDate %>
                 </div>
 
                 <!-- Topbar Navbar -->
@@ -147,34 +145,33 @@
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-envelope fa-fw"></i>
                             <!-- Counter - Messages -->
-                            <span class="badge badge-danger badge-counter"><%=notifications.length%></span>
+                            <span class="badge badge-danger badge-counter"><%= notifications.length %></span>
                         </a>
                         <!-- Dropdown - Messages -->
 
-                        <%if(notifications.length > 0){%>
+                        <% if(notifications.length > 0){ %>
                             <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                  aria-labelledby="messagesDropdown">
                                 <h6 class="dropdown-header">
                                     Message Center
                                 </h6>
-                                <%for(let notification of notifications){%>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_1.svg"
-                                             alt="">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div class="font-weight-bold">
-                                        <div class="text-truncate"><%=notification.content%></div>
-                                        <div class="small text-gray-500"><%=notification.Consultant.email%></div>
-                                    </div>
-                                </a>
-                                    <%}%>
-
+                                <% for(let notification of notifications){ %>
+                                    <a class="dropdown-item d-flex align-items-center" href="#">
+                                        <div class="dropdown-list-image mr-3">
+                                            <img class="rounded-circle" src="img/undraw_profile_1.svg"
+                                                 alt="">
+                                            <div class="status-indicator bg-success"></div>
+                                        </div>
+                                        <div class="font-weight-bold">
+                                            <div class="text-truncate"><%= notification.content %></div>
+                                            <div class="small text-gray-500"><%= notification.Consultant.email %></div>
+                                        </div>
+                                    </a>
+                                <% } %>
 
                                 <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
                             </div>
-                        <%}%>
+                        <% } %>
                     </li>
 
 
@@ -185,10 +182,9 @@
                     <li class="nav-item dropdown no-arrow">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <%if(currentUser){%>
-                            <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%=currentUser.name%></span>
-                            <%}%>
-
+                            <% if(currentUser){ %>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= currentUser.name %></span>
+                            <% } %>
 
                             <img class="img-profile rounded-circle"
                                  src="/img/undraw_profile.svg">
@@ -224,7 +220,8 @@
                                 <span aria-hidden="true">×</span>
                             </button>
                         </div>
-                        <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                        <div class="modal-body">Select "Logout" below if you are ready to end your current session.
+                        </div>
                         <div class="modal-footer">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                             <a class="btn btn-primary" href="/login/logout">Logout</a>
@@ -234,19 +231,67 @@
             </div>
             <!-- End of Topbar -->
 
-            <%- include("./partials/flash")%>
+            <%- include("./partials/flash") %>
 
             <div>
-<!--                Insert body here-->
+                <!--                Insert body here-->
+                <div class="container">
+                    <% if(weeks.length > 0){ %>
+                        <% for (let week of weeks){ %>
+                            <div class="col-xl-4 col-md-6 mb-4">
+                                <div class="card border-left-primary shadow h-100 py-0">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="h4 mb-0 font-weight-bold text-gray-800">
+                                                    Week Submission by - <%= week.Consultant.name %></div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <div class="row">
+                                                <div class="col-sm-6 d-flex align-items-center">
+                                        <span class="myLabel available">
+                                            <b>Current</b>
+                                        </span>
+                                                </div>
+                                                <div class="col-sm-6 d-flex align-items-center justify-content-end">
+                                                    <a href="/week/<%= week.id %>"
+                                                       class="btn btn-sm btn-secondary mr-1">View</a>
+                                                    <form action="/submitweek" method="post"
+                                                          onsubmit="return confirm('Confirm to accept this week');">
+
+                                                        <button type="submit" class="btn btn-success btn-sm py-1">Accept
+                                                        </button>
+                                                    </form>
+                                                    <form action="/submitweek" method="post"
+                                                          onsubmit="return confirm('Confirm to reject this week');">
+                                                        <button type="submit" class="btn btn-danger btn-sm py-1">Reject
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %>
+                    <% } else{%>
+                        <h2>No submissions yet</h2>
+                    <%}%>
+                </div>
             </div>
+
+
         </div>
-        <!-- Page content (insert things here) -->
-
-        <!-- End ofPage content (insert things above) -->
-
-        <!-- End of Main Content -->
+        <!--            Body ends above-->
     </div>
-    <!-- End of Content Wrapper -->
+    <!-- Page content (insert things here) -->
+
+    <!-- End ofPage content (insert things above) -->
+
+    <!-- End of Main Content -->
+</div>
+<!-- End of Content Wrapper -->
 </div>
 <!-- End of Page Wrapper -->
 
@@ -265,10 +310,10 @@
 <!-- Page level custom scripts -->
 
 <script>
-    $(document).ready(function(){
-        $("#myInput").on("keyup", function() {
+    $(document).ready(function () {
+        $("#myInput").on("keyup", function () {
             var value = $(this).val().toLowerCase();
-            $("#myTable tr").filter(function() {
+            $("#myTable tr").filter(function () {
                 $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
             });
         });
@@ -278,8 +323,6 @@
 <script>
     $('[data-toggle="tooltip"]').tooltip();
 </script>
-
-
 
 
 <!--<script type="text/javascript" src="/javascripts/csvCP.js" ></script>-->

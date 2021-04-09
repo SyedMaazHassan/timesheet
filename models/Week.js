@@ -8,7 +8,8 @@ module.exports = (sequelize, Datatypes) => {
         state:{
             type: Datatypes.INTEGER,
             allowNull:false,
-            defaultValue: 1
+            zerofill:true,
+            defaultValue: 0
         },
         link_code:{
             type:Datatypes.STRING,
