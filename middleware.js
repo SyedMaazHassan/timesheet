@@ -12,7 +12,7 @@ module.exports.checkLoggedOut = (req, res, next) => {
     next();
 };
 module.exports.isConsultant = (req,res,next)=>{
-    if(req.user.role == 0 || req.user.role == 1 ){
+    if(req.user.role === 3 ){
         return next()
     }
     req.flash('error', 'You are not authorized');

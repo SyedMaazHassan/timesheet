@@ -274,16 +274,16 @@
                                         <td style="width: 100%;">
                                             <p class="my-0 py-0">{{ schedule.description }}</p>
                                         </td>
-                                        <td class="d-flex d-none">
-                                            <button type="button" style="margin: auto;" @click="editSlot(index)"
-                                                    class="btn btn-success p-1 radius-100 d-flex mr-2 align-items-center justify-content-center">
-                                                <i class="material-icons my-0 py-0">edit</i>
-                                            </button>
-                                            <button type="button" style="margin: auto;" @click="deleteSlot(index)"
-                                                    class="btn btn-danger p-1 radius-100 d-flex align-items-center justify-content-center">
-                                                <i class="material-icons my-0 py-0">delete</i>
-                                            </button>
-                                        </td>
+<!--                                        <td class="d-flex d-none">-->
+<!--                                            <button type="button" style="margin: auto;" @click="editSlot(index)"-->
+<!--                                                    class="btn btn-success p-1 radius-100 d-flex mr-2 align-items-center justify-content-center">-->
+<!--                                                <i class="material-icons my-0 py-0">edit</i>-->
+<!--                                            </button>-->
+<!--                                            <button type="button" style="margin: auto;" @click="deleteSlot(index)"-->
+<!--                                                    class="btn btn-danger p-1 radius-100 d-flex align-items-center justify-content-center">-->
+<!--                                                <i class="material-icons my-0 py-0">delete</i>-->
+<!--                                            </button>-->
+<!--                                        </td>-->
                                     </tr>
 
 
@@ -331,6 +331,7 @@
             </div>
             <div class="col-6 d-flex flex-row-reverse">
                 <form action="/accept" method="post" onsubmit="return confirm('Confirm to accept this week');">
+                    <input class="d-none" type="text" placeholder="Place your feedback here..." name="link_code" value="<%=week[0].link_code%>">
                     <button type="submit" class="btn btn btn-success">Accept</button>
                 </form>
 

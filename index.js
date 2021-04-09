@@ -11,6 +11,57 @@ const {isAdmin, checkLoggedOut, checkLoggedIn, isConsultant, isManager} = requir
 const {v4: uuidv4} = require('uuid');
 uuidv4(); // ⇨ '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed'
 
+const nodemailer = require('nodemailer')
+
+
+function sendEmail(email, link) {
+    const output = `    
+    <h3>A new timesheet has been approved by Manager</h3>           
+    <p>Click on link below or paste the URL in the browser</p>  
+    
+    <ul>
+        <li>
+            <a href="${link}">${link}</a>
+        </li>
+    </ul> 
+      
+    
+  `;
+
+    // create reusable transporter object using the default SMTP transport
+    let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        host: 'smtp.gmail.com',
+        auth: {
+            user: 'musabjaved10@gmail.com', // use your own email in env file or here
+            pass: process.env.sender_email_pass || 'password'  // use your pass in env file or here
+        },
+        tls: {
+            rejectUnauthorized: false
+        }
+    });
+
+    // setup email data with unicode symbols
+    let mailOptions = {
+        from: '"noreply" <musabjaved10@gmail.com>', // sender address
+        to: `${email}`, // list of receivers
+        subject: 'New timesheet', // Subject line
+        text: 'Timesheet', // plain text body
+        html: output // html body
+    };
+
+    // send mail with defined transport object
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return console.log(error);
+        }
+        console.log('Message sent: %s', info.messageId);
+        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+
+        res.render('contact', {msg: 'Email has been sent'});
+    });
+}
+
 
 //sequelize
 const db = require("./models")
@@ -192,16 +243,16 @@ app.post('/reject/:link_code', (req, res) => {
     const content = req.body.content
     db.Week.update({state: -1, LinemanagerId: req.user.id}, {
         where: {link_code: req.params.link_code},
-        raw:true,
-        nest:true
+        raw: true,
+        nest: true
     }).then(result => {
-        db.Week.findAll({where: {link_code: req.params.link_code},raw:true, nest:true}).then(week => {
+        db.Week.findAll({where: {link_code: req.params.link_code}, raw: true, nest: true}).then(week => {
             db.Feedback.create({
-                content:content,
+                content: content,
                 WeekId: week[0].id,
-                raw:true,
-                nest:true
-            }).then(()=>{
+                raw: true,
+                nest: true
+            }).then(() => {
                 req.flash('success', 'Feedback has been sent')
                 res.redirect('/indexmanager')
             })
@@ -210,9 +261,24 @@ app.post('/reject/:link_code', (req, res) => {
 })
 
 app.post('/accept', (req, res) => {
+    res.locals.currentUser = req.user;
+    const link_code = req.body.link_code;
+    db.Week.update({state: 2, LinemanagerId: req.user.id}, {
+        where: {link_code: link_code}
+    }).then(() => {
+        db.Week.findAll({where: {link_code: link_code}, raw: true, nest: true}).then(week => {
+            db.Feedback.destroy({
+                where: {WeekId: week[0].id}
+            }).then(async () => {
+                await sendEmail('javed4130257@cloud.neduet.edu.pk', `http://localhost:3000/view/${link_code}`)
+                req.flash('success', 'week accepted')
+                res.redirect('/indexmanager')
+            })
+        })
+    })
 
 })
-app.get('/week/:id', checkLoggedIn, async (req, res) => {
+app.get('/week/:id', checkLoggedIn, isConsultant, async (req, res) => {
     res.locals.currentUser = req.user
     res.locals.weekCreatable = false
     const id = req.params.id
@@ -240,15 +306,14 @@ app.get('/week/:id', checkLoggedIn, async (req, res) => {
                 if (result && result.length > 0) {
                     // return res.render('newWeek', {week,result:null})
                     db.Feedback.findAll({
-                        where:{WeekId: id},
-                        raw:true,
-                        nest:true
-                    }).then(feedback=>{
-                        if(feedback.length > 0){
-                            return res.render('newWeek', {feedback,week, result: JSON.stringify(result[0].data)})
-                        }
-                        else{
-                            return res.render('newWeek', {feedback:null,week, result: JSON.stringify(result[0].data)})
+                        where: {WeekId: id},
+                        raw: true,
+                        nest: true
+                    }).then(feedback => {
+                        if (feedback.length > 0) {
+                            return res.render('newWeek', {feedback, week, result: JSON.stringify(result[0].data)})
+                        } else {
+                            return res.render('newWeek', {feedback: null, week, result: JSON.stringify(result[0].data)})
                         }
 
                     })
@@ -256,7 +321,7 @@ app.get('/week/:id', checkLoggedIn, async (req, res) => {
 
                 } else {
                     result = null
-                    return res.render('newWeek', {feedback:null,week, result})
+                    return res.render('newWeek', {feedback: null, week, result})
                 }
             })
         } else {
@@ -345,10 +410,10 @@ app.get('/check2/:link_code', checkLoggedIn, isManager, (req, res) => {
     //
     // })
     db.Week.findAll({
-        where:{link_code: req.params.link_code},
-        raw:true,
-        nest:true
-    }).then(result=>console.log(result))
+        where: {link_code: req.params.link_code},
+        raw: true,
+        nest: true
+    }).then(result => console.log(result))
 })
 
 app.listen(PORT, () => {
