@@ -11276,5 +11276,53 @@ footer.sticky-footer .copyright {
 body.sidebar-toggled footer.sticky-footer {
   width: 100%;
 }
+.radius-10{
+  border-radius: 10px;
+}
+
+.google-box{
+  box-shadow: 0 0 2px rgb(0 0 0 / 12%), 0 2px 2px rgb(0 0 0 / 24%);
+}
+
+.profile-card{
+  transition-duration: 0.25s;
+  border: solid 1px #eeeeee;
+}
+
+.profile-card:hover {
+  background-color: #EAEEFF;
+  color: #004170;
+  transition-duration: 0.25s;
+}
+
+.mk-pointer{
+  cursor: pointer;
+}
+
+.heading-color{
+  color: #004170;
+}
+
+.radius-100{
+  border-radius: 100%;
+}
+
+.primary-button, .primary-button:hover{
+  background-color: #004170;
+  color: #ffffff;
+}
+
+.selected-day{
+  background-color: #EAEEFF;
+  color: #004170;
+}
+
+.padding-2{
+  padding:13px;
+}
+
+.border-primary-color{
+  border: solid 2px #004170;
+}
 
 

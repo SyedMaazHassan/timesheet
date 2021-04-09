@@ -1,21 +1,18 @@
 module.exports = (sequelize, Datatypes) => {
     const Week = sequelize.define("Week",{
-        month:{
-            type:Datatypes.INTEGER,
-            allowNull: false
-        },
         creation_date:{
             type:Datatypes.STRING,
-            allowNull: false
+            allowNull: true
         },
 
         state:{
             type: Datatypes.INTEGER,
-            allowNull:false
+            allowNull:false,
+            defaultValue: 1
         },
         link_code:{
             type:Datatypes.STRING,
-            allowNull: false
+            allowNull: true
         }
     });
 

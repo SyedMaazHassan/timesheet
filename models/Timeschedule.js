@@ -1,7 +1,7 @@
 module.exports = (sequelize, Datatypes) => {
     const Timeschedule = sequelize.define("Timeschedule", {
         data: {
-            type: Datatypes.STRING(500),
+            type: Datatypes.TEXT,
             allowNull: false
         }
     });
