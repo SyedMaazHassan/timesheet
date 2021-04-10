@@ -10,6 +10,7 @@ const passport = require('passport')
 const {isAdmin, checkLoggedOut, checkLoggedIn, isConsultant, isManager} = require('./middleware')
 const {v4: uuidv4} = require('uuid');
 uuidv4(); // ⇨ '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed'
+const bcrypt = require('bcrypt')
 
 const nodemailer = require('nodemailer')
 
@@ -121,7 +122,58 @@ app.get('/indexadmin',checkLoggedIn,isAdmin,(req,res)=>{
         raw:true,
         nest:true
     }).then(result=>{
-        res.render('/indexAdmin',{result})
+        let count = 0
+        res.render('indexAdmin',{result,count})
+    })
+})
+app.get('/admin/manager/:id',checkLoggedIn,isAdmin,(req,res)=>{
+    res.locals.currentUser = req.user
+    db.Linemanager.findAll({
+        where:{id:req.params.id},
+        raw:true,
+        nest:true
+    }).then(result=>{
+        if(result && result.length > 0){
+            console.log(result)
+            return res.render('adminMdetails',{result})
+        }
+        return res.redirect('/indexadmin')
+    })
+})
+app.get('/admin/consultant/:id',checkLoggedIn,isAdmin,(req,res)=>{
+    res.locals.currentUser = req.user
+    db.Consultant.findAll({
+        where:{id:req.params.id},
+        raw:true,
+        nest:true
+    }).then(result=>{
+        if(result && result.length > 0){
+            console.log(result)
+            return res.render('adminCdetails',{result})
+        }
+        return res.redirect('/indexadmin')
+    })
+})
+app.post('/setpass/consultant',checkLoggedIn,isAdmin,async(req,res)=>{
+    res.locals.currentUser = req.user
+    const {newPass,id} = req.body
+    const hashed = await bcrypt.hashSync(newPass,10)
+    await db.Consultant.update({password: hashed},{
+        where:{id:id}
+    }).then(()=>{
+        req.flash('success','Password has been changed successfully')
+        return res.redirect(req.headers.referer)
+    })
+})
+app.post('/setpass/manager',checkLoggedIn,isAdmin,async(req,res)=>{
+    res.locals.currentUser = req.user
+    const {newPass,id} = req.body
+    const hashed = await bcrypt.hashSync(newPass,10)
+    db.Linemanager.update({password: hashed},{
+        where:{id:id}
+    }).then(()=>{
+        req.flash('success','Password has been changed successfully')
+        return res.redirect(req.headers.referer)
     })
 })
 

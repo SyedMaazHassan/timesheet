@@ -59,6 +59,7 @@
 
 
 
+
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
 
@@ -135,18 +136,18 @@
                     <!-- Nav Item - Messages -->
 
                     <li class="nav-item dropdown no-arrow mx-1">
-<!--                        <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"-->
-<!--                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
-<!--                            <i class="fas fa-envelope fa-fw"></i>-->
-<!--                            &lt;!&ndash; Counter - Messages &ndash;&gt;-->
-<!--                        </a>-->
-<!--                        &lt;!&ndash; Dropdown - Messages &ndash;&gt;-->
+                        <!--                        <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"-->
+                        <!--                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+                        <!--                            <i class="fas fa-envelope fa-fw"></i>-->
+                        <!--                            &lt;!&ndash; Counter - Messages &ndash;&gt;-->
+                        <!--                        </a>-->
+                        <!--                        &lt;!&ndash; Dropdown - Messages &ndash;&gt;-->
 
 
 
-                    <div class="topbar-divider d-none d-sm-block"></div>
+                        <div class="topbar-divider d-none d-sm-block"></div>
 
-                    <!-- Nav Item - User Information -->
+                        <!-- Nav Item - User Information -->
 
                     <li class="nav-item dropdown no-arrow">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
@@ -199,44 +200,42 @@
 
             <%- include("./partials/flash") %>
 
-            <div class="card-body">
-                <div class="table-responsive">
-                    <input class="form-control" id="myInput" type="text" placeholder="Search..">
-                    <br>
-                    <table id="example1" class="table table-bordered table-striped">
-                        <input value="Export as CSV " type="button" class="d-none btn btn-info" onclick="$('#example1').table2CSV()">
-                        <button class="btn btn-info" id='exb'>Export to CSV file</button>
-                        <thead class="bg-primary text-white">
-                        <tr>
-                            <th>S.NO</th>
-                            <th>Consultant</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Line Manager</th>
-                            <th>email</th>
-                        </tr>
-                        </thead>
+            <div class="row pb-3 ">
+                <div class="col-12">
+                    <h1 class="text-center d-block">Manager Information</h1>
+                </div>
+                <div class="col-md-6 offset-md-3 bg-gradient-info">
+                    <form action="/setpass/manager" method="post" >
+                        <div class="d-none" >
+                            <input type="text" name="id" value="<%=result[0].id%>">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-white" for="title">Name</label>
+                            <input class="form-control" type="text" id="title" name="floor_name" disabled placeholder="<%=result[0].name%>">
 
+                        </div>
 
-                        <tbody id="myTable">
+                        <div class="mb-3">
+                            <label class="form-label text-white" for="email">Name</label>
+                            <input class="form-control" type="text" id="email" name="floor_name" disabled placeholder="<%=result[0].email%>">
 
-                        <%for (let data of result){%>
-                        <%count+=1%>
-                        <tr>
-                            <td><%=count%></td>
-                            <td><a href="/admin/consultant/<%=data.id%>"><%=data.name%></a></td>
-                            <td><%=data.email%></td>
-                            <td><%=data.phone%></td>
-                            <td><a href="admin/manager/<%=data.LinemanagerId%>"><%=data.Linemanager.name%></a></td>
-                            <td><%=data.Linemanager.email%></td>
-                        </tr>
-                        <%}%>
+                        </div>
 
+                        <div class="mb-3">
+                            <label class="form-label text-white" for="phone">Phone</label>
+                            <input class="form-control" type="text" id="phone"  disabled placeholder="<%=result[0].phone%>">
+                        </div>
 
+                        <div class="mb-3">
+                            <label class="form-label text-white" for="title">New Password</label>
+                            <input class="form-control" type="text" id="title" name="newPass" required>
+                        </div>
 
-                        </tbody>
+                        <div class="mb-3">
+                            <button class="btn btn-success" >Update Password</button>
+                        </div>
+                    </form>
 
-                    </table>
                 </div>
             </div>
 
@@ -265,18 +264,7 @@
 <!-- Custom scripts for all pages-->
 <script src="/javascripts/sb-admin-2.min.js"></script>
 <!-- Page level custom scripts -->
-<script>
-    $(document).ready(function(){
-        $("#myInput").on("keyup", function() {
-            var value = $(this).val().toLowerCase();
-            $("#myTable tr").filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
-        });
-    });
-</script>
 
-<script type="text/javascript" src="/javascripts/csvCP.js" ></script>
 
 
 
