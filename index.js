@@ -35,7 +35,7 @@ function sendEmail(email, link) {
         host: 'smtp.gmail.com',
         auth: {
             user: 'musabjaved10@gmail.com', // use your own email in env file or here
-            pass: process.env.sender_email_pass || 'password'  // use your pass in env file or here
+            pass: process.env.sender_email_pass || 'Jetbrains2000!'  // use your pass in env file or here
         },
         tls: {
             rejectUnauthorized: false
@@ -217,6 +217,10 @@ app.get('/', checkLoggedIn, async (req, res) => {
 })
 app.get('/indexmanager', checkLoggedIn, async (req, res) => {
     res.locals.currentUser = req.user
+    let c1;
+    let c2;
+    let c3;
+    let c4
     await db.Notification.findAll({
         where: {LinemanagerId: req.user.id},
         include: [db.Consultant],
@@ -224,11 +228,10 @@ app.get('/indexmanager', checkLoggedIn, async (req, res) => {
         raw: true
     }).then(notifications => {
         res.locals.notifications = notifications
-        console.log(notifications)
+        // console.log(notifications)
     })
     await db.Consultant.findAll({
         where: {LinemanagerId: req.user.id},
-        attributes: ['id'],
         nest: true,
         raw: true
     }).then(ids => {
@@ -240,16 +243,45 @@ app.get('/indexmanager', checkLoggedIn, async (req, res) => {
             where: {id: consultantIds},
             raw: true,
             nest: true
-        }).then(
+        }).then(()=> {
             db.Week.findAll({
-                where: {ConsultantId: consultantIds, state: [-1, 0, 1]},
+                where: {ConsultantId: consultantIds[0].id, state: [-1, 0, 1]},
                 include: [db.Consultant],
                 nest: true,
                 raw: true
-            }).then(weeks => {
+            }).then(data => {
+                c1 = data
+            })
+            db.Week.findAll({
+                where: {ConsultantId: consultantIds[1].id, state: [-1, 0, 1]},
+                include: [db.Consultant],
+                nest: true,
+                raw: true
+            }).then(data => {
+                c2 = data
+            })
+            db.Week.findAll({
+                where: {ConsultantId: consultantIds[2].id, state: [-1, 0, 1]},
+                include: [db.Consultant],
+                nest: true,
+                raw: true
+            }).then(data => {
+                c3 = data
+            })
+             db.Week.findAll({
+                where: {ConsultantId: consultantIds[3].id, state: [-1, 0, 1]},
+                include: [db.Consultant],
+                nest: true,
+                raw: true
+            }).then(data => {
+                c4 = data
+                 console.log(c4)
 
-                res.render('indexManager', {weeks})
-            }))
+                 return res.render('indexmanager',{c1,c2,c3,c4,consultantIds})
+            })
+
+        })
+
     })
 
 })
