@@ -196,7 +196,6 @@ app.get('/', checkLoggedIn, async (req, res) => {
     })
     await db.Notification.findAll({
         where: {ConsultantId: req.user.id},
-        include: [db.Consultant],
         nest: true,
         raw: true
     }).then(notifications => {
@@ -254,6 +253,34 @@ app.get('/indexmanager', checkLoggedIn, async (req, res) => {
     })
 
 })
+app.get('/send',isManager,async (req,res)=>{
+    res.locals.currentUser = req.user
+    await db.Notification.destroy({
+        where:{LinemanagerId: req.user.id}
+    })
+    await db.Consultant.findAll({
+        where: {LinemanagerId: req.user.id},
+        attributes: ['id'],
+        nest: true,
+        raw: true
+    }).then(ids => {
+        const consultantIds = []
+        for (let id of ids) {
+            consultantIds.push(id.id)
+        }
+        for (id of consultantIds){
+            db.Notification.create({
+                content: "Please make submissions ASAP. Ignore if done already",
+                ConsultantId: id,
+                LinemanagerId: req.user.id
+            })
+        }
+        req.flash('success','Notified !')
+        res.redirect(req.headers.referer)
+    })
+
+})
+
 app.post('/newweek', async (req, res) => {
     await db.Week.create({
         ConsultantId: req.user.id,

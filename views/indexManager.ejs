@@ -57,13 +57,12 @@
             </a>
         </li>
 
-        <li class="nav-item">
-            <a class="nav-link text-center " href="/login/changepassword">
-                <i class="fas fa-circle"></i>
-                <span>Week Submissions</span>
+        <li class="nav-item" >
+            <a class="nav-link text-center " href="/send">
+                <i class="fas fa-envelope"></i>
+                <span>Notify my consultants</span>
             </a>
         </li>
-
 
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
@@ -141,12 +140,7 @@
                     <!-- Nav Item - Messages -->
 
                     <li class="nav-item dropdown no-arrow mx-1">
-                        <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-envelope fa-fw"></i>
-                            <!-- Counter - Messages -->
-                            <span class="badge badge-danger badge-counter"><%= notifications.length %></span>
-                        </a>
+
                         <!-- Dropdown - Messages -->
 
                         <% if(notifications.length > 0){ %>
