@@ -41,10 +41,10 @@
                                             <% } %>
 
                                              <% if(week.state === 0 || week.state === -1){ %>
-                                            <form action="/submitweek" method="post"
+                                            <form action="/submit" method="post"
                                                   onsubmit="return confirm('Submit for review ?');">
                                                 <div class="d-none">
-
+                                                    <input type="text" name="week_id" value="<%=week.id%>">
                                                 </div>
                                                 <button type="submit" class="btn btn-primary btn-sm py-1">Submit
                                                 </button>

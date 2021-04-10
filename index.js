@@ -278,6 +278,22 @@ app.post('/accept', (req, res) => {
     })
 
 })
+
+app.post('/submit',(req,res)=>{
+    res.locals.currentUser = req.user
+    const week_id = req.body.week_id
+    db.Feedback.destroy({
+        where:{WeekId: week_id}
+    }).then(()=>{
+        db.Week.update({state:1},{
+            where:{id: week_id}
+        }).then(()=>{
+            req.flash('success','Week has been submitted for review')
+            res.redirect(req.headers.referer)
+        })
+    })
+
+})
 app.get('/week/:id', checkLoggedIn, isConsultant, async (req, res) => {
     res.locals.currentUser = req.user
     res.locals.weekCreatable = false
