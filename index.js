@@ -114,6 +114,17 @@ let weekCreatable = true
 const userRoutes = require('./routes/user')
 app.use('/login', userRoutes)
 
+app.get('/indexadmin',checkLoggedIn,isAdmin,(req,res)=>{
+    res.locals.currentUser = req.user
+    db.Consultant.findAll({
+        include:[db.Linemanager],
+        raw:true,
+        nest:true
+    }).then(result=>{
+        res.render('/indexAdmin',{result})
+    })
+})
+
 app.get('/', checkLoggedIn, async (req, res) => {
     res.locals.currentUser = req.user
     await db.Week.findOne({
@@ -403,7 +414,7 @@ app.get('/check/:link_code', (req, res, next) => {
     })
 
 })
-app.get('/check2/:link_code', checkLoggedIn, isManager, (req, res) => {
+app.get('/check2', checkLoggedIn, isManager, (req, res) => {
     res.locals.weekCreatable = true
     res.locals.notifications = ['hello']
     // db.Consultant.findAll({
@@ -425,11 +436,13 @@ app.get('/check2/:link_code', checkLoggedIn, isManager, (req, res) => {
     //     }).then(w => res.send(w[0].Consultant))
     //
     // })
-    db.Week.findAll({
-        where: {link_code: req.params.link_code},
-        raw: true,
-        nest: true
-    }).then(result => console.log(result))
+    db.Consultant.findAll({
+        include:[db.Linemanager],
+        raw:true,
+        nest:true
+    }).then(result=>{
+        res.send(result)
+    })
 })
 
 app.listen(PORT, () => {

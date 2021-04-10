@@ -27,7 +27,7 @@ module.exports.isManager = (req,res,next)=>{
 }
 
 module.exports.isAdmin = (req,res,next)=>{
-    if(req.user.role == 0 || req.user.role == 1 ){
+    if(req.user.role === 1 ){
         return next()
     }
     req.flash('error', 'You are not authorized');
