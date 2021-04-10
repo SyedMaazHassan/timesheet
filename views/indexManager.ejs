@@ -235,7 +235,7 @@
                             <h4>Submissions from <b class="text-primary"><%= consultantIds[0].name %></b></h4>
                             <% if(c1.length > 0){ %>
                                 <% for(let week of c1){ %>
-                                    <% if(week.state === 1){ %>
+                                    <% if(week.state > 0){ %>
                                         <div>
                                             <div class="card border-left-primary shadow h-100 py-0">
                                                 <div class="card-body">
@@ -250,7 +250,15 @@
                                                         <div class="row">
                                                             <div class="col-sm-6 d-flex align-items-center">
                                             <span class="myLabel available">
-                                                <b>Current</b>
+                                                <% if(week.state === 0){ %>
+                                                    <%= 'Current' %>
+                                                <% }if(week.state === -1){ %>
+                                                    <%= 'Rejected' %>
+                                                <% }if(week.state === 1){ %>
+                                                    <%= 'Submitted' %>
+                                                <% }if(week.state === 2){ %>
+                                                    <%= 'Accepted' %>
+                                                <% } %>
                                             </span>
                                                             </div>
                                                             <div class="col-sm-6 d-flex align-items-center justify-content-end">
@@ -265,7 +273,9 @@
                                     <% } %>
                                 <% } %>
                             <% } else{ %>
-                                <h2>No submissions from <%= consultantIds[0].name %></h2>
+                                <div class="alert alert-primary my-3">
+                                    No submissions from <%= consultantIds[0].name %>
+                                </div>
                             <% } %>
                         </div>
 
@@ -273,7 +283,7 @@
                             <h4>Submissions from <b class="text-primary"><%= consultantIds[1].name %></b></h4>
                             <% if(c2.length > 0){ %>
                                 <% for(let week of c2){ %>
-                                    <% if(week.state === 1){ %>
+                                    <% if(week.state > 0){ %>
                                         <div>
                                             <div class="card border-left-primary shadow h-100 py-0">
                                                 <div class="card-body">
@@ -288,7 +298,15 @@
                                                         <div class="row">
                                                             <div class="col-sm-6 d-flex align-items-center">
                                             <span class="myLabel available">
-                                                <b>Current</b>
+                                                <% if(week.state === 0){ %>
+                                                    <%= 'Current' %>
+                                                <% }if(week.state === -1){ %>
+                                                    <%= 'Rejected' %>
+                                                <% }if(week.state === 1){ %>
+                                                    <%= 'Submitted' %>
+                                                <% }if(week.state === 2){ %>
+                                                    <%= 'Accepted' %>
+                                                <% } %>
                                             </span>
                                                             </div>
                                                             <div class="col-sm-6 d-flex align-items-center justify-content-end">
@@ -303,7 +321,10 @@
                                     <% } %>
                                 <% } %>
                             <% } else{ %>
-                                <h2>No submissions from <%= consultantIds[1].name %></h2>
+                                <div class="alert alert-primary my-3">
+                                    No submissions from <%= consultantIds[1].name %>
+                                </div>
+
                             <% } %>
                         </div>
 
@@ -311,7 +332,7 @@
                             <h4>Submissions from <b class="text-primary"><%= consultantIds[2].name %></b></h4>
                             <% if(c3.length > 0){ %>
                                 <% for(let week of c3){ %>
-                                    <% if(week.state === 1){ %>
+                                    <% if(week.state > 0){ %>
                                         <div>
                                             <div class="card border-left-primary shadow h-100 py-0">
                                                 <div class="card-body">
@@ -326,7 +347,15 @@
                                                         <div class="row">
                                                             <div class="col-sm-6 d-flex align-items-center">
                                             <span class="myLabel available">
-                                                <b>Current</b>
+                                                <% if(week.state === 0){ %>
+                                                    <%= 'Current' %>
+                                                <% }if(week.state === -1){ %>
+                                                    <%= 'Rejected' %>
+                                                <% }if(week.state === 1){ %>
+                                                    <%= 'Submitted' %>
+                                                <% }if(week.state === 2){ %>
+                                                    <%= 'Accepted' %>
+                                                <% } %>
                                             </span>
                                                             </div>
                                                             <div class="col-sm-6 d-flex align-items-center justify-content-end">
@@ -341,7 +370,10 @@
                                     <% } %>
                                 <% } %>
                             <% } else{ %>
-                                <h2>No submissions from <%= consultantIds[2].name %></h2>
+                                <div class="alert alert-primary my-3">
+                                    No submissions from <%= consultantIds[2].name %>
+                                </div>
+
                             <% } %>
                         </div>
 
@@ -349,7 +381,7 @@
                             <h4>Submissions from <b class="text-primary"><%= consultantIds[3].name %></b></h4>
                             <% if(c4.length > 0){ %>
                                 <% for(let week of c4){ %>
-                                    <% if(week.state === 1){ %>
+                                    <% if(week.state > 0){ %>
                                         <div>
                                             <div class="card border-left-primary shadow h-100 py-0">
                                                 <div class="card-body">
@@ -364,7 +396,15 @@
                                                         <div class="row">
                                                             <div class="col-sm-6 d-flex align-items-center">
                                             <span class="myLabel available">
-                                                <b>Current</b>
+                                                <% if(week.state === 0){ %>
+                                                    <%= 'Current' %>
+                                                <% }if(week.state === -1){ %>
+                                                    <%= 'Rejected' %>
+                                                <% }if(week.state === 1){ %>
+                                                    <%= 'Submitted' %>
+                                                <% }if(week.state === 2){ %>
+                                                    <%= 'Accepted' %>
+                                                <% } %>
                                             </span>
                                                             </div>
                                                             <div class="col-sm-6 d-flex align-items-center justify-content-end">
@@ -379,7 +419,10 @@
                                     <% } %>
                                 <% } %>
                             <% } else{ %>
-                                <h2>No submissions from <%= consultantIds[3].name %></h2>
+                                <div class="alert alert-primary my-3">
+                                    No submissions from <%= consultantIds[3].name %>
+                                </div>
+
                             <% } %>
                         </div>
 

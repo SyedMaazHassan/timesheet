@@ -35,7 +35,7 @@ function sendEmail(email, link) {
         host: 'smtp.gmail.com',
         auth: {
             user: 'musabjaved10@gmail.com', // use your own email in env file or here
-            pass: process.env.sender_email_pass || 'Jetbrains2000!'  // use your pass in env file or here
+            pass: process.env.sender_email_pass || 'password'  // use your pass in env file or here
         },
         tls: {
             rejectUnauthorized: false
@@ -134,7 +134,7 @@ app.get('/admin/manager/:id',checkLoggedIn,isAdmin,(req,res)=>{
         nest:true
     }).then(result=>{
         if(result && result.length > 0){
-            console.log(result)
+            // console.log(result)
             return res.render('adminMdetails',{result})
         }
         return res.redirect('/indexadmin')
@@ -148,7 +148,7 @@ app.get('/admin/consultant/:id',checkLoggedIn,isAdmin,(req,res)=>{
         nest:true
     }).then(result=>{
         if(result && result.length > 0){
-            console.log(result)
+            // console.log(result)
             return res.render('adminCdetails',{result})
         }
         return res.redirect('/indexadmin')
@@ -186,7 +186,7 @@ app.get('/', checkLoggedIn, async (req, res) => {
         nest: true,
         raw: true
     }).then(result => {
-        console.log(result)
+        // console.log(result)
         if (result) {
             weekCreatable = Number(result.createdAt.toLocaleDateString().split('/')[0]) + 7 > date.getDay()
             res.locals.weekCreatable = false
@@ -237,7 +237,7 @@ app.get('/indexmanager', checkLoggedIn, async (req, res) => {
     }).then(ids => {
         const consultantIds = []
         for (let id of ids) {
-            consultantIds.push(id.id)
+            consultantIds.push(id)
         }
         db.Consultant.findAll({
             where: {id: consultantIds},
@@ -245,7 +245,7 @@ app.get('/indexmanager', checkLoggedIn, async (req, res) => {
             nest: true
         }).then(()=> {
             db.Week.findAll({
-                where: {ConsultantId: consultantIds[0].id, state: [-1, 0, 1]},
+                where: {ConsultantId: consultantIds[0].id},
                 include: [db.Consultant],
                 nest: true,
                 raw: true
@@ -253,7 +253,7 @@ app.get('/indexmanager', checkLoggedIn, async (req, res) => {
                 c1 = data
             })
             db.Week.findAll({
-                where: {ConsultantId: consultantIds[1].id, state: [-1, 0, 1]},
+                where: {ConsultantId: consultantIds[1].id},
                 include: [db.Consultant],
                 nest: true,
                 raw: true
@@ -261,7 +261,7 @@ app.get('/indexmanager', checkLoggedIn, async (req, res) => {
                 c2 = data
             })
             db.Week.findAll({
-                where: {ConsultantId: consultantIds[2].id, state: [-1, 0, 1]},
+                where: {ConsultantId: consultantIds[2].id},
                 include: [db.Consultant],
                 nest: true,
                 raw: true
@@ -269,13 +269,13 @@ app.get('/indexmanager', checkLoggedIn, async (req, res) => {
                 c3 = data
             })
              db.Week.findAll({
-                where: {ConsultantId: consultantIds[3].id, state: [-1, 0, 1]},
+                where: {ConsultantId: consultantIds[3].id},
                 include: [db.Consultant],
                 nest: true,
                 raw: true
             }).then(data => {
                 c4 = data
-                 console.log(c4)
+                 // console.log(c4)
 
                  return res.render('indexmanager',{c1,c2,c3,c4,consultantIds})
             })
@@ -325,7 +325,7 @@ app.post('/newweek', async (req, res) => {
         raw: true
     }).then(week => {
         if (week) {
-            console.log(week)
+            // console.log(week)
             return res.redirect(`/week/${week.id}`)
         }
     })
@@ -346,7 +346,7 @@ app.get('/view/:link_code', (req, res) => {
             }).then(result => {
                 if (result && result.length > 0) {
                     // return res.render('newWeek', {week,result:null})
-                    console.log(week, '\nnow result', result)
+                    // console.log(week, '\nnow result', result)
                     return res.render('viewWeek', {week, result: JSON.stringify(result[0].data)})
                 } else {
                     result = null
@@ -435,7 +435,7 @@ app.get('/week/:id', checkLoggedIn, isConsultant, async (req, res) => {
         raw: true
     }).then(week => {
         if (week && week.length > 0) {
-            console.log(week)
+            // console.log(week)
             db.Timeschedule.findAll({
                 where: {WeekId: id},
                 nest: true,
@@ -511,7 +511,7 @@ app.get('/check/:link_code', (req, res, next) => {
             }).then(result => {
                 if (result && result.length > 0) {
                     // return res.render('newWeek', {week,result:null})
-                    console.log(week, '\nnow result', result)
+                    // console.log(week, '\nnow result', result)
                     return res.render('viewWeek', {week, result: JSON.stringify(result[0].data)})
                 } else {
                     result = null

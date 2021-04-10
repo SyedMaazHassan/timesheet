@@ -75,7 +75,15 @@
                                     <div class="row">
                                         <div class="col-sm-6 d-flex align-items-center">
                                         <span class="myLabel booked">
-                                            <b>Past</b>
+                                            <% if(week.state === 0){ %>
+                                                <%= 'Current' %>
+                                            <% }if(week.state === -1){ %>
+                                                <%= 'Rejected' %>
+                                            <% }if(week.state === 1){ %>
+                                                <%= 'Submitted' %>
+                                            <% }if(week.state === 2){ %>
+                                                <%= 'Accepted' %>
+                                            <% } %>
                                         </span>
                                         </div>
                                         <div class="col-sm-6 d-flex align-items-center justify-content-end">

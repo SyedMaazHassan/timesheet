@@ -320,7 +320,7 @@
 
 
     </div>
-    <%if(currentUser && currentUser.role === 2){%>
+    <%if(currentUser && currentUser.role === 2 && week[0].state !== 2){%>
         <div class="row mt-3">
             <div class="col-6">
                 <form action="/reject/<%=week[0].link_code%>" method="post" onsubmit="return confirm('Confirm to reject this week');">
